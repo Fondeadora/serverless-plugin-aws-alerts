@@ -235,12 +235,14 @@ class AlertsPlugin {
     const topicConfig = topics[key];
     const isTopicConfigAnObject = _.isObject(topicConfig);
     const isTopicConfigAnImport = isTopicConfigAnObject && topicConfig.topic['Fn::ImportValue'];
+    const isTopicConfigAReference = isTopicConfigAnObject && topicConfig.topic['Fn::Join']
+
 
     const topic = isTopicConfigAnObject ? topicConfig.topic : topicConfig;
     const notifications = isTopicConfigAnObject ? topicConfig.notifications : [];
 
     if (topic) {
-      if (isTopicConfigAnImport || topic.indexOf('arn:') === 0) {
+      if (isTopicConfigAReference || isTopicConfigAnImport || topic.indexOf('arn:') === 0) {
         if (customAlarmName) {
           alertTopics[customAlarmName] = alertTopics[customAlarmName] || {};
           alertTopics[customAlarmName][key] = topic;
@@ -308,19 +310,6 @@ class AlertsPlugin {
           LogGroupName: logGroupName,
           MetricTransformations: [{
             MetricValue: 1,
-            MetricNamespace: metricNamespace,
-            MetricName: metricName
-          }]
-        }
-      },
-      [logMetricCFRefOK]: {
-        Type: 'AWS::Logs::MetricFilter',
-        DependsOn: cfLogName,
-        Properties: {
-          FilterPattern: '',
-          LogGroupName: logGroupName,
-          MetricTransformations: [{
-            MetricValue: 0,
             MetricNamespace: metricNamespace,
             MetricName: metricName
           }]

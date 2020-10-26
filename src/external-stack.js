@@ -105,6 +105,7 @@ class ExternalStack {
     } else if (typeof resource === "object") {
       for (const key in resource) {
         if (key === "Ref" && typeof resource[key] === "string") {
+          if (resource[key].startsWith('AWS::')) return
           // Found a (Lambda function) reference. See if it's unresolved.
           const refName = resource[key];
           if (!preMergedResources[refName]) {
@@ -137,6 +138,13 @@ class ExternalStack {
           const refName = resource[key];
           if (!preMergedResources[refName]) {
             if (
+              resource[key].endsWith('LogGroup') &&
+              parent[childKey].Type === 'AWS::Logs::MetricFilter'
+            ) {
+              // Metric filters targetting serverless generated LogGroup resource
+              // should be merged after removing DependsOn property
+              delete parent[childKey].DependsOn;
+            } else if (
               this.serverless.service.provider.compiledCloudFormationTemplate
                 .Resources[refName]
             ) {
