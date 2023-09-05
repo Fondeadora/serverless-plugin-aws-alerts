@@ -99,8 +99,8 @@ class ExternalStack {
       }
     } else if (typeof resource === 'object') {
       for (const key in resource) {
-        if (key === "Ref" && typeof resource[key] === "string") {
-          if (resource[key].startsWith('AWS::')) return
+        if (key === 'Ref' && typeof resource[key] === 'string') {
+          if (resource[key].startsWith('AWS::')) return;
           // Found a (Lambda function) reference. See if it's unresolved.
           const refName = resource[key];
           if (!preMergedResources[refName]) {
@@ -458,24 +458,22 @@ class ExternalStack {
       })),
     };
 
-    return Promise.resolve()
-      .then(() =>
-        this.uploadCloudFormationTemplate(compiledCloudFormationTemplate)
-      )
+    return this.uploadCloudFormationTemplate(compiledCloudFormationTemplate)
       .then((templateUrl) => {
         params.TemplateURL = templateUrl;
         return this.provider.request('CloudFormation', 'updateStack', params);
       })
       .then(() => this.waitForExternalStack(externalStackName, 'update'))
-      .then(null, (err) => {
-        if (err.message && err.message.match(/^No updates/)) {
-          // Stack is unchanged, ignore error
+      .catch((err) => {
+        const NO_UPDATE_MESSAGE = 'No updates are to be performed.';
+
+        if (err.message && err.message.includes(NO_UPDATE_MESSAGE)) {
           this.serverless.cli.log(
             `External alert stack ${externalStackName} has not changed.`
           );
-          return Promise.resolve();
+        } else {
+          throw err;
         }
-        return Promise.reject(err);
       });
   }
 
