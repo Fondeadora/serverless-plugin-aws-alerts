@@ -9,7 +9,7 @@ describe('#naming', () => {
       const expected = 'PrefixFunctionErrorsAlarm';
       const actual = naming.getAlarmCloudFormationRef(
         'functionErrors',
-        'prefix'
+        'prefix',
       );
       expect(actual).toEqual(expected);
     });
@@ -23,7 +23,7 @@ describe('#naming', () => {
       const expected = 'PrefixFunctionErrorsLogMetricFilter';
       const actual = naming.getLogMetricCloudFormationRef(
         'Prefix',
-        'functionErrors'
+        'functionErrors',
       );
       expect(actual).toEqual(expected);
     });
@@ -54,7 +54,7 @@ describe('#naming', () => {
           { Name: 'FunctionName', Value: 'overridden' },
           { Name: 'Duck', Value: 'QUACK' },
         ],
-        'funcName'
+        'funcName',
       );
       expect(actual).toEqual(expected);
     });
@@ -72,7 +72,7 @@ describe('#naming', () => {
       ];
       const actual = naming.getDimensionsList(
         [{ Name: 'Duck', Value: 'QUACK' }],
-        'funcName'
+        'funcName',
       );
       expect(actual).toEqual(expected);
     });
@@ -82,7 +82,7 @@ describe('#naming', () => {
       const actual = naming.getDimensionsList(
         [{ Name: 'Duck', Value: 'QUACK' }],
         'funcName',
-        true
+        true,
       );
       expect(actual).toEqual(expected);
     });

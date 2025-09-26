@@ -26,10 +26,10 @@ class AlertsPlugin {
     this.hooks = {
       'package:compileEvents': this.compile.bind(this),
       'after:deploy:deploy': this.externalStack.afterDeployGlobal.bind(
-        this.externalStack
+        this.externalStack,
       ),
       'before:remove:remove': this.externalStack.beforeRemoveGlobal.bind(
-        this.externalStack
+        this.externalStack,
       ),
     };
   }
@@ -62,8 +62,8 @@ class AlertsPlugin {
             definition,
             {
               name: alarm,
-            }
-          )
+            },
+          ),
         );
       } else if (isObject(alarm)) {
         result.push(
@@ -73,8 +73,8 @@ class AlertsPlugin {
               type: 'static',
             },
             definitions[alarm.name],
-            alarm
-          )
+            alarm,
+          ),
         );
       }
 
@@ -151,7 +151,7 @@ class AlertsPlugin {
       : this.naming.getDimensionsList(
           definition.dimensions,
           functionRef,
-          definition.omitDefaultDimension
+          definition.omitDefaultDimension,
         );
 
     const treatMissingData = definition.treatMissingData
@@ -233,7 +233,7 @@ class AlertsPlugin {
       };
     } else {
       throw new Error(
-        `Missing type for alarm ${definition.name} on function ${functionName}, must be one of 'static' or 'anomalyDetection'`
+        `Missing type for alarm ${definition.name} on function ${functionName}, must be one of 'static' or 'anomalyDetection'`,
       );
     }
 
@@ -287,6 +287,7 @@ class AlertsPlugin {
       isTopicConfigAnObject && topicConfig.topic['Fn::Join'];
 
     const topic = isTopicConfigAnObject ? topicConfig.topic : topicConfig;
+    const isTopicAReference = isObject(topic) && topic.Ref;
 
     const notifications = isTopicConfigAnObject
       ? topicConfig.notifications
@@ -296,7 +297,8 @@ class AlertsPlugin {
       if (
         isTopicConfigAReference ||
         isTopicConfigAnImport ||
-        topic.indexOf('arn:') === 0
+        isTopicAReference ||
+        (isString(topic) && topic.indexOf('arn:') === 0)
       ) {
         if (customAlarmName) {
           alertTopics[customAlarmName] = alertTopics[customAlarmName] || {};
@@ -352,13 +354,13 @@ class AlertsPlugin {
     alarm,
     functionName,
     normalizedFunctionName,
-    functionObj
+    functionObj,
   ) {
     if (!alarm.pattern) return {};
 
     const logMetricCFRefBase = this.naming.getLogMetricCloudFormationRef(
       normalizedFunctionName,
-      alarm.name
+      alarm.name,
     );
     const logMetricCFRefALERT = `${logMetricCFRefBase}ALERT`;
 
@@ -367,7 +369,7 @@ class AlertsPlugin {
     const logGroupName = this.providerNaming.getLogGroupName(functionObj.name);
     const metricName = this.naming.getPatternMetricName(
       alarm.metric,
-      normalizedFunctionName
+      normalizedFunctionName,
     );
 
     return {
@@ -401,7 +403,7 @@ class AlertsPlugin {
       const functionAlarms = this.getFunctionAlarms(
         functionObj,
         config,
-        definitions
+        definitions,
       );
       const alarms = globalAlarms.concat(functionAlarms).map((alarm) =>
         Object.assign(
@@ -409,21 +411,21 @@ class AlertsPlugin {
             nameTemplate: config.nameTemplate,
             prefixTemplate: config.prefixTemplate,
           },
-          alarm
-        )
+          alarm,
+        ),
       );
 
       const alarmStatements = alarms.reduce((statements, alarm) => {
         const key = this.naming.getAlarmCloudFormationRef(
           alarm.name,
-          functionName
+          functionName,
         );
         if (alarm.enabled) {
           const cf = this.getAlarmCloudFormation(
             alertTopics,
             alarm,
             functionName,
-            normalizedFunctionName
+            normalizedFunctionName,
           );
 
           statements[key] = cf;
@@ -432,7 +434,7 @@ class AlertsPlugin {
             alarm,
             functionName,
             normalizedFunctionName,
-            functionObj
+            functionObj,
           );
           merge(statements, logMetricCF);
         } else {
@@ -464,7 +466,7 @@ class AlertsPlugin {
       }
 
       this.serverless.cli.log(
-        `Info: Not deploying dashboards on stage ${this.options.stage}`
+        `Info: Not deploying dashboards on stage ${this.options.stage}`,
       );
       return [];
     }
@@ -478,7 +480,7 @@ class AlertsPlugin {
     const region = this.options.region || provider.region;
     const dashboardTemplates = this.getDashboardTemplates(
       configDashboards,
-      stage
+      stage,
     );
 
     const functions = this.serverless.service
@@ -491,7 +493,7 @@ class AlertsPlugin {
         stage,
         region,
         functions,
-        d
+        d,
       );
 
       const cfResource =
@@ -522,7 +524,7 @@ class AlertsPlugin {
 
     if (config.stages && !config.stages.includes(this.options.stage)) {
       this.serverless.cli.log(
-        `Warning: Not deploying alerts on stage ${this.options.stage}`
+        `Warning: Not deploying alerts on stage ${this.options.stage}`,
       );
       return;
     }
@@ -546,7 +548,7 @@ class AlertsPlugin {
       merge(
         this.serverless.service.provider.compiledCloudFormationTemplate
           .Resources,
-        resources
+        resources,
       );
     }
   }

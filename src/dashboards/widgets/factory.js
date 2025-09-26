@@ -47,7 +47,7 @@ const getWidget = (service, metric, display) => {
   const widget = serviceMetricWidgets[display];
   if (!widget) {
     throw new Error(
-      `Invalid metric ${display} for service ${service} and metric ${metric}`
+      `Invalid metric ${display} for service ${service} and metric ${metric}`,
     );
   }
 
