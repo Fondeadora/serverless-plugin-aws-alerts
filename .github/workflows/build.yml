@@ -4,29 +4,33 @@ on: [push, pull_request]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
+    name: Node ${{ matrix.node-version }}, Serverless ${{ matrix.serverless-version }}
 
     strategy:
       matrix:
-        node-version: [10.x, 12.x, 14.x]
+        node-version: [18.x, 20.x, 22.x]
+        serverless-version: ['^3.0.0']
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v5
 
       - name: Use node ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v5
         with:
           node-version: ${{ matrix.node-version }}
 
       - name: Install packages
-        run: yarn install --frozen-lockfile
+        run: npm ci
+
+      - name: Install Serverless
+        run: npm install serverless@${{ matrix.serverless-version }}
 
       - name: Run lint
-        run: yarn lint
+        run: npm run lint
 
       - name: Run tests
-        run: yarn test
+        run: npm test
 
       - name: Generate code coverage
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v4

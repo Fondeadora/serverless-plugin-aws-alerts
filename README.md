@@ -1,12 +1,14 @@
 # Serverless AWS Alerts Plugin
-  [![NPM version][npm-image]][npm-url]
-  [![Build Status][travis-image]][travis-url]
-  [![Dependency Status][daviddm-image]][daviddm-url]
-  [![codecov][codecov-image]][codecov-url]
+
+[![NPM version][npm-image]][npm-url]
+[![Build Status][travis-image]][travis-url]
+[![Dependency Status][daviddm-image]][daviddm-url]
+[![codecov][codecov-image]][codecov-url]
 
 A Serverless plugin to easily add CloudWatch alarms to functions
 
 ## Installation
+
 ```bash
 npm i serverless-plugin-aws-alerts --save-dev
 
@@ -18,6 +20,7 @@ yarn add --dev serverless-plugin-aws-alerts
 ## Usage
 
 ### Basic Usage
+
 ```yaml
 # serverless.yml
 
@@ -40,15 +43,16 @@ custom:
 ```
 
 ### Advanced Usage
+
 ```yaml
 service: your-service
 provider:
   name: aws
-  runtime: nodejs12.x
+  runtime: nodejs18.x
 
 plugins:
   - serverless-plugin-aws-alerts
-  
+
 custom:
   alerts:
     stages: # Optionally - select which stages to deploy alarms to
@@ -64,7 +68,7 @@ custom:
       ok: ${self:service}-${opt:stage}-alerts-ok
       alarm: ${self:service}-${opt:stage}-alerts-alarm
       insufficientData: ${self:service}-${opt:stage}-alerts-insufficientData
-    definitions:  # these defaults are merged with your definitions
+    definitions: # these defaults are merged with your definitions
       functionErrors:
         period: 300 # override period
       customAlarm:
@@ -150,28 +154,27 @@ errors in 60s
 ```yaml
 custom:
   alerts:
-
     topics:
       critical:
         ok:
           topic: ${self:service}-${opt:stage}-critical-alerts-ok
           notifications:
-          - protocol: https
-            endpoint: https://events.pagerduty.com/integration/.../enqueue
+            - protocol: https
+              endpoint: https://events.pagerduty.com/integration/.../enqueue
         alarm:
           topic: ${self:service}-${opt:stage}-critical-alerts-alarm
           notifications:
-          - protocol: https
-            endpoint: https://events.pagerduty.com/integration/.../enqueue
+            - protocol: https
+              endpoint: https://events.pagerduty.com/integration/.../enqueue
 
       nonCritical:
         alarm:
           topic: ${self:service}-${opt:stage}-nonCritical-alerts-alarm
           notifications:
-          - protocol: email
-            endpoint: alarms@email.com
+            - protocol: email
+              endpoint: alarms@email.com
 
-    definitions:  # these defaults are merged with your definitions
+    definitions: # these defaults are merged with your definitions
       criticalFunctionErrors:
         namespace: 'AWS/Lambda'
         metric: Errors
@@ -197,8 +200,8 @@ custom:
     alarms:
       - criticalFunctionErrors
       - nonCriticalFunctionErrors
-
 ```
+
 ## SNS Topics
 
 If topic name is specified, plugin assumes that topic does not exist and will create it. To use existing topics, specify ARNs or use CloudFormation (e.g. Fn::ImportValue, Fn::Join and Ref) to refer to existing topics.
@@ -265,6 +268,7 @@ custom:
 You can configure notifications to send to webhook URLs, to SMS devices, to other Lambda functions, and more. Check out the AWS docs [here](http://docs.aws.amazon.com/sns/latest/api/API_Subscribe.html) for configuration options.
 
 ## Metric Log Filters
+
 You can monitor a log group for a function for a specific pattern. Do this by adding the pattern key.
 You can learn about custom patterns at: http://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/FilterAndPatternSyntax.html
 
@@ -296,15 +300,18 @@ custom:
 > Note: For custom log metrics, namespace property will automatically be set to stack name (e.g. `fooservice-dev`).
 
 ## Custom Naming
+
 You can define custom naming template for the alarms. `nameTemplate` property under `alerts` configures naming template for all the alarms, while placing `nameTemplate` under alarm definition configures (overwrites) it for that specific alarm only. Naming template provides interpolation capabilities, where supported placeholders are:
-  - `$[functionName]` - function name (e.g. `helloWorld`)
-  - `$[functionId]` - function logical id (e.g. `HelloWorldLambdaFunction`)
-  - `$[metricName]` - metric name (e.g. `Duration`)
-  - `$[metricId]` - metric id (e.g. `BunyanErrorsHelloWorldLambdaFunction` for the log based alarms, `$[metricName]` otherwise)
+
+- `$[functionName]` - function name (e.g. `helloWorld`)
+- `$[functionId]` - function logical id (e.g. `HelloWorldLambdaFunction`)
+- `$[metricName]` - metric name (e.g. `Duration`)
+- `$[metricId]` - metric id (e.g. `BunyanErrorsHelloWorldLambdaFunction` for the log based alarms, `$[metricName]` otherwise)
 
 > Note: All the alarm names are prefixed with stack name (e.g. `fooservice-dev`).
 
 ## Default Definitions
+
 The plugin provides some default definitions that you can simply drop into your application. For example:
 
 ```yaml
@@ -321,7 +328,7 @@ creating a completely new definition.
 
 ```yaml
 alerts:
-  definitions:  # these defaults are merged with your definitions
+  definitions: # these defaults are merged with your definitions
     functionErrors:
       period: 300 # override period
       treatMissingData: notBreaching # override treatMissingData
@@ -391,7 +398,6 @@ functions:
     alarms:
       - name: functionInvocations
         enabled: false
-
 ```
 
 ## Additional dimensions
@@ -400,19 +406,19 @@ The plugin allows users to provide custom dimensions for the alarm. Dimensions a
 The plugin will always apply dimension of {Name: FunctionName, Value: ((FunctionName))}, except if the parameter `omitDefaultDimension: true` is passed. For example:
 
 ```yaml
-    alarms: # merged with function alarms
-      - name: fooAlarm
-        namespace: 'AWS/Lambda'
-        metric: errors # define custom metrics here
-        threshold: 1
-        statistic: Minimum
-        period: 60
-        evaluationPeriods: 1
-        comparisonOperator: GreaterThanThreshold
-        omitDefaultDimension: true
-        dimensions:
-          -  Name: foo
-             Value: bar
+alarms: # merged with function alarms
+  - name: fooAlarm
+    namespace: 'AWS/Lambda'
+    metric: errors # define custom metrics here
+    threshold: 1
+    statistic: Minimum
+    period: 60
+    evaluationPeriods: 1
+    comparisonOperator: GreaterThanThreshold
+    omitDefaultDimension: true
+    dimensions:
+      - Name: foo
+        Value: bar
 ```
 
 ```json
@@ -426,7 +432,7 @@ The plugin will always apply dimension of {Name: FunctionName, Value: ((Function
 
 ## Using Percentile Statistic for a Metric
 
-Statistic not only supports SampleCount, Average, Sum, Minimum or Maximum as defined in CloudFormation [here](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cw-alarm.html#cfn-cloudwatch-alarms-statistic), but also percentiles. This is possible by leveraging  [ExtendedStatistic](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cw-alarm.html#cfn-cloudwatch-alarms-extendedstatistic) under the hood. This plugin will automatically choose the correct key for you. See an example below:
+Statistic not only supports SampleCount, Average, Sum, Minimum or Maximum as defined in CloudFormation [here](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cw-alarm.html#cfn-cloudwatch-alarms-statistic), but also percentiles. This is possible by leveraging [ExtendedStatistic](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cw-alarm.html#cfn-cloudwatch-alarms-extendedstatistic) under the hood. This plugin will automatically choose the correct key for you. See an example below:
 
 ```yaml
 definitions:
@@ -471,16 +477,19 @@ which is equivalent to adding `externalStack: true` to the configuration.
 The plugin can create dashboards automatically for basic metrics.
 
 Default setup for a single dashboard:
+
 ```yaml
 dashboards: true
 ```
 
 Create a vertical dashboard:
+
 ```yaml
 dashboards: vertical
 ```
 
 Create dashboards only in specified stages:
+
 ```yaml
 dashboards:
   stages:
@@ -493,7 +502,6 @@ dashboards:
 ## License
 
 MIT © [A Cloud Guru](https://acloud.guru/)
-
 
 [npm-image]: https://badge.fury.io/js/serverless-plugin-aws-alerts.svg
 [npm-url]: https://npmjs.org/package/serverless-plugin-aws-alerts
