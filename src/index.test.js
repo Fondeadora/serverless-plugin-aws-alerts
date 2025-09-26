@@ -309,7 +309,7 @@ describe('#index', () => {
           alarms: [],
         },
         config,
-        definitions
+        definitions,
       );
 
       expect(actual).toEqual([]);
@@ -323,7 +323,7 @@ describe('#index', () => {
           alarms: ['customAlarm'],
         },
         config,
-        definitions
+        definitions,
       );
 
       expect(actual).toEqual([
@@ -363,7 +363,7 @@ describe('#index', () => {
           ],
         },
         config,
-        definitions
+        definitions,
       );
 
       expect(actual).toEqual([
@@ -393,8 +393,8 @@ describe('#index', () => {
             alarms: ['missingAlarm'],
           },
           config,
-          definitions
-        )
+          definitions,
+        ),
       ).toThrow(Error);
     });
   });
@@ -417,7 +417,7 @@ describe('#index', () => {
 
       expect(
         plugin.serverless.service.provider.compiledCloudFormationTemplate
-          .Resources
+          .Resources,
       ).toEqual({});
     });
 
@@ -449,7 +449,7 @@ describe('#index', () => {
 
       expect(
         plugin.serverless.service.provider.compiledCloudFormationTemplate
-          .Resources
+          .Resources,
       ).toEqual({});
     });
 
@@ -472,7 +472,7 @@ describe('#index', () => {
 
       expect(
         plugin.serverless.service.provider.compiledCloudFormationTemplate
-          .Resources
+          .Resources,
       ).toEqual({
         AwsAlertsOk: {
           Type: 'AWS::SNS::Topic',
@@ -511,7 +511,7 @@ describe('#index', () => {
 
       expect(
         plugin.serverless.service.provider.compiledCloudFormationTemplate
-          .Resources
+          .Resources,
       ).toEqual({
         AwsAlertsOk: {
           Type: 'AWS::SNS::Topic',
@@ -566,7 +566,7 @@ describe('#index', () => {
 
       expect(
         plugin.serverless.service.provider.compiledCloudFormationTemplate
-          .Resources
+          .Resources,
       ).toEqual({
         AwsAlertsCriticalOk: {
           Type: 'AWS::SNS::Topic',
@@ -628,7 +628,7 @@ describe('#index', () => {
 
       expect(
         plugin.serverless.service.provider.compiledCloudFormationTemplate
-          .Resources
+          .Resources,
       ).toEqual({});
     });
 
@@ -653,7 +653,7 @@ describe('#index', () => {
 
       expect(
         plugin.serverless.service.provider.compiledCloudFormationTemplate
-          .Resources
+          .Resources,
       ).toEqual({});
     });
   });
@@ -672,7 +672,7 @@ describe('#index', () => {
 
       expect(
         plugin.serverless.service.provider.compiledCloudFormationTemplate
-          .Resources
+          .Resources,
       ).toEqual({
         FooFunctionInvocationsAlarm: {
           Type: 'AWS::CloudWatch::Alarm',
@@ -729,7 +729,7 @@ describe('#index', () => {
       plugin.compileAlarms(config, definitions, alertTopics);
       expect(
         plugin.serverless.service.provider.compiledCloudFormationTemplate
-          .Resources
+          .Resources,
       ).toEqual({
         FooBunyanErrorsAlarm: {
           Type: 'AWS::CloudWatch::Alarm',
@@ -782,7 +782,7 @@ describe('#index', () => {
       plugin.compileAlarms(config, definitions, alertTopics);
       expect(
         plugin.serverless.service.provider.compiledCloudFormationTemplate
-          .Resources
+          .Resources,
       ).toEqual({
         FooFunctionErrorsAlarm: {
           Type: 'AWS::CloudWatch::Alarm',
@@ -830,7 +830,7 @@ describe('#index', () => {
       plugin.compileAlarms(config, definitions, alertTopics);
       expect(
         plugin.serverless.service.provider.compiledCloudFormationTemplate
-          .Resources
+          .Resources,
       ).toEqual({
         FooFunctionErrorsAlarm: {
           Type: 'AWS::CloudWatch::Alarm',
@@ -882,7 +882,7 @@ describe('#index', () => {
       plugin.compileAlarms(config, definitions, alertTopics);
       expect(
         plugin.serverless.service.provider.compiledCloudFormationTemplate
-          .Resources
+          .Resources,
       ).toEqual({
         FooFunctionErrorsAlarm: {
           Type: 'AWS::CloudWatch::Alarm',
@@ -936,7 +936,7 @@ describe('#index', () => {
       plugin.compileAlarms(config, definitions, alertTopics);
       expect(
         plugin.serverless.service.provider.compiledCloudFormationTemplate
-          .Resources
+          .Resources,
       ).toEqual({
         FooFunctionErrorsAlarm: {
           Type: 'AWS::CloudWatch::Alarm',
@@ -987,7 +987,7 @@ describe('#index', () => {
       plugin.compileAlarms(config, definitions, alertTopics);
       expect(
         plugin.serverless.service.provider.compiledCloudFormationTemplate
-          .Resources
+          .Resources,
       ).toEqual({
         FooFunctionInvocationsAlarm: {
           Type: 'AWS::CloudWatch::Alarm',
@@ -1035,7 +1035,7 @@ describe('#index', () => {
 
     it('should return default template if config is object without templates defined', () => {
       expect(
-        plugin.getDashboardTemplates({ stages: ['production'] }, stage)
+        plugin.getDashboardTemplates({ stages: ['production'] }, stage),
       ).toEqual(['default']);
     });
 
@@ -1043,8 +1043,8 @@ describe('#index', () => {
       expect(
         plugin.getDashboardTemplates(
           { stages: ['production'], templates: ['vertical'] },
-          stage
-        )
+          stage,
+        ),
       ).toEqual(['vertical']);
     });
 
@@ -1052,14 +1052,14 @@ describe('#index', () => {
       expect(
         plugin.getDashboardTemplates(
           { stages: ['production'], templates: ['vertical'] },
-          'dev'
-        )
+          'dev',
+        ),
       ).toEqual([]);
     });
 
     it('should return all defined dashboards if config is an array', () => {
       expect(
-        plugin.getDashboardTemplates(['default', 'vertical'], stage)
+        plugin.getDashboardTemplates(['default', 'vertical'], stage),
       ).toEqual(['default', 'vertical']);
     });
   });
@@ -1190,7 +1190,7 @@ describe('#index', () => {
         alertTopics,
         definition,
         functionName,
-        functionRef
+        functionRef,
       );
 
       expect(cf).toEqual({
@@ -1258,7 +1258,7 @@ describe('#index', () => {
         alertTopics,
         definition,
         functionName,
-        functionRef
+        functionRef,
       );
 
       expect(cf).toEqual({
@@ -1320,7 +1320,7 @@ describe('#index', () => {
         alertTopics,
         definition,
         functionName,
-        functionRef
+        functionRef,
       );
 
       expect(cf).toEqual({
@@ -1384,7 +1384,7 @@ describe('#index', () => {
         alertTopics,
         definition,
         functionName,
-        functionRef
+        functionRef,
       );
 
       expect(cf).toEqual({
@@ -1450,7 +1450,7 @@ describe('#index', () => {
         alertTopics,
         definition,
         functionName,
-        functionRef
+        functionRef,
       );
 
       expect(cf).toEqual({
@@ -1508,7 +1508,7 @@ describe('#index', () => {
         alertTopics,
         definition,
         functionName,
-        functionRef
+        functionRef,
       );
 
       expect(cf).toEqual({
@@ -1567,7 +1567,7 @@ describe('#index', () => {
         alertTopics,
         definition,
         functionName,
-        functionRef
+        functionRef,
       );
 
       expect(cf).toEqual({

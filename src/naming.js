@@ -32,7 +32,7 @@ class Naming {
     };
 
     const filteredDimensions = (dimensionsList || []).filter(
-      (dim) => dim.Name !== 'FunctionName'
+      (dim) => dim.Name !== 'FunctionName',
     );
     filteredDimensions.push(funcNameDimension);
     return filteredDimensions;
@@ -51,7 +51,7 @@ class Naming {
         : '$[stackName]';
     const interpolatedPrefix = prefixTemplate.replace(
       '$[stackName]',
-      options.stackName
+      options.stackName,
     );
 
     return interpolatedPrefix
